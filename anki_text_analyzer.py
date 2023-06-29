@@ -1,5 +1,6 @@
 import plotly.express as px
 from os import listdir
+from time import time
 def no_special_characters(string):
     trash =[",", "[","]","'","!","?",".","»","=","\\","(",")","/","=","==",":","-",";","^","´","`","|"]
     new_string=string.lower()
@@ -38,7 +39,7 @@ if "anki.txt" in listdir():
         for line in archive.readlines():
             for words in line.split():
                 anki_words.add(no_special_characters(words))
-
+t0=time()
 if file[-4::]==".pdf":
     from PyPDF2 import PdfReader
     pdf_object = PdfReader(pdf_file:=open(file, 'rb'))
@@ -52,7 +53,13 @@ if file[-4::]==".pdf":
 if file[-4::]==".txt":
     with open("anki.txt","r",encoding='utf-8') as file:
         for line in file.readlines():
-            Add_Word_Counter(line)
+            AddWord_Counter(line)
+print(f"lendo o arquivo em {time() -t0}")
+t0=time()
+with open("C_code//importar.txt","w") as txt:
+    for i,j in zip(word_counter.keys(),word_counter.values()):
+        txt.write(f"{i} ; {j}\n")
+
 
 word_ocur_list = list(word_counter.items())
 
@@ -62,7 +69,20 @@ words = [w for w, f in word_ocur_list_sorted]
 occurrences = [f for w, f in word_ocur_list_sorted]
 total_occurrences=sum(occurrences)
 
+
+x,y=[],[]
+parcial_sum=0
+for j in range(len(words)):
+    parcial_sum+=occurrences[j]
+    x.append(parcial_sum/sum(occurrences))
+    y.append(j)
+Rank=[j for j in range(1,len(occurrences)+1)]
+
+frequencies=[j/total_occurrences for j in occurrences]
+
 anki="" if len(anki_words)==0 else "_anki"
+print(f"calculos em {time() -t0}")
+
 with open(file[:-4]+anki+'.txt', 'w',encoding="utf-8") as f:
     f.write(f"Análise do arquivo {file}\n")
     if len(anki_words): f.write(f"Considerando somente o que não está no Anki\n")
@@ -71,13 +91,6 @@ with open(file[:-4]+anki+'.txt', 'w',encoding="utf-8") as f:
     for j in range(len(words)):
         f.write(f"Rank {j+1}, {words[j]}: frequência  {round(100*(occurrences[j]/total_occurrences),4)}%  ocorrências   {occurrences[j]} \n")
 
-x,y=[],[]
-parcial_sum=0
-for j in range(len(words)):
-    parcial_sum+=occurrences[j]
-    x.append(parcial_sum/sum(occurrences))
-    y.append(j)
-
 fig=px.scatter(x=x,y=y,width=1920,height=1080,title=titulo.title() + " Estatística")
 fig.update_layout(
         xaxis_title="Compreensão Textual em %",
@@ -85,10 +98,6 @@ fig.update_layout(
         font=dict(family="Courier New, monospace", size=36,color="RebeccaPurple"))
 fig.show()
 fig.write_html(titulo+"_compreensao_textual"+'.html')
-
-Rank=[j for j in range(1,len(occurrences)+1)]
-
-frequencies=[j/total_occurrences for j in occurrences]
 
 fig2=px.scatter(x=Rank,y=frequencies,width=1920,height=1080,title=titulo.title() + " Frequência de palavras",log_y=True,log_x=True)
 fig2.update_layout(xaxis_title="Rank",yaxis_title="Frequência em %",font=dict(

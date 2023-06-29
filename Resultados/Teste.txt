@@ -1,9 +1,0 @@
-22 Palavras totais
-4 Palavras únicas
-4 Palavras únicas por página
-9.09 % , na Palavra 1º Ocorre a transição linear
- 
-Rank 1,    test,:       4.5455%        1 ocorrencias
-Rank 2,    specificalye:       4.5455%        1 ocorrencias
-Rank 3,    appar:       4.5455%        1 ocorrencias
-Rank 4,    becauze:       4.5455%        1 ocorrencias
